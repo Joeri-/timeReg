@@ -1,7 +1,7 @@
 const moment = require('moment');
 moment.locale('nl-be');
 
-// Man-page
+// Help page
 if (process.argv[2] === '-h' || process.argv[2] === '--help') {
     console.log('Usage: timeReg [OPTIONS]');
     console.log('');
@@ -11,6 +11,9 @@ if (process.argv[2] === '-h' || process.argv[2] === '--help') {
     process.exit(0);
 }
 
+// Constants
+const STANDARD_TIME = 7.4; // hours
+const LUNCH_BREAK = 45; // minutes
 let startTime, endTime;
 
 for (let index of process.argv.keys()) {
@@ -26,16 +29,17 @@ for (let index of process.argv.keys()) {
     }
 }
 
+// Error when no start time is given
 if (!startTime) {
     console.error('[!]   No start time given --> see the help page "node timeReg.js --help"');
     process.exit(1);
 }
 
-// Read the start time
+// Read the startTime
 const startHours = +startTime[0];
 const startMinutes = +startTime[1];
 
-// Read the end time or use the current time
+// Read the endTime or use the current time if no endTime is passed
 let endHours = moment().hours();
 let endMinutes = moment().minutes();
 
@@ -44,11 +48,9 @@ if (endTime) {
     endMinutes = +endTime[1] || moment().minutes();
 }
 
-const standardTime = 7.4; // hours
-const lunchBreak = 45; // minutes
-
-const startOfDay = moment().startOf('day');
+// Helper functions
 const getTime = (init, hours, minutes) => moment(init).add(hours, 'hour').add(minutes, 'minute');
+
 const formatFlexTime = (flexTimeInMinutes) => {
     const sign = Math.abs(flexTimeInMinutes) / flexTimeInMinutes;
 
@@ -62,17 +64,20 @@ const formatFlexTime = (flexTimeInMinutes) => {
     return sign < 0 ? `-${time}` : time;
 };
 
+// All the different moments we need
+const startOfDay = moment().startOf('day');
 const startOfWorkingDay = getTime(startOfDay, startHours, startMinutes);
-const endOfHalfWorkingDay = getTime(startOfWorkingDay, standardTime/2, 0);
-const endOfWorkingDay = getTime(startOfWorkingDay, standardTime, 45);
+const endOfHalfWorkingDay = getTime(startOfWorkingDay, STANDARD_TIME/2, 0);
+const endOfWorkingDay = getTime(startOfWorkingDay, STANDARD_TIME, 45);
 const projectedEndTime = getTime(startOfDay, endHours, endMinutes);
 
+// Calculate flexTime
 const flexTime = moment(projectedEndTime)
-    .subtract(standardTime, 'hour')
-    .subtract(lunchBreak, 'minute')
+    .subtract(STANDARD_TIME, 'hour')
+    .subtract(LUNCH_BREAK, 'minute')
     .diff(startOfWorkingDay, 'minute');
 
-
+// Print stuff
 console.log('***********************************');
 console.log('******** KBC TIME MACHINE *********');
 console.log('***********************************');
