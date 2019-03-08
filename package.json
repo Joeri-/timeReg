@@ -7,9 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "joeri.jackers@kbc.be",
   "license": "ISC",
   "dependencies": {
-    "moment": "^2.24.0"
+    "moment": "2.24.0"
   }
 }
