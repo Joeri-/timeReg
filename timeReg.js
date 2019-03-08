@@ -44,8 +44,8 @@ let endHours = moment().hours();
 let endMinutes = moment().minutes();
 
 if (endTime) {
-    endHours = +endTime[0] || moment().hours();
-    endMinutes = +endTime[1] || moment().minutes();
+    endHours = +endTime[0];
+    endMinutes = +endTime[1];
 }
 
 // Helper functions
