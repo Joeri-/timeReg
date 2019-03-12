@@ -79,7 +79,7 @@ const flexTime = moment(projectedEndTime)
 
 // Print stuff
 console.log('***********************************');
-console.log('******** KBC TIME MACHINE *********');
+console.log('********** TIME MACHINE ***********');
 console.log('***********************************');
 console.log(`***   Day started     @ ${startOfWorkingDay.format('LT')}   ***`);
 console.log(`***   Half day ends   @ ${endOfHalfWorkingDay.format('LT')}   ***`);
