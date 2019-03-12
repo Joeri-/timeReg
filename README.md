@@ -24,7 +24,7 @@ $ node ./timeReg.js -b 07:45 -e 16:30
 ```bash
 $ node timeReg.js -b 07:30 -e 16:55
 ***********************************
-******** KBC TIME MACHINE *********
+********** TIME MACHINE ***********
 ***********************************
 ***   Day started     @ 07:30   ***
 ***   Half day ends   @ 11:12   ***
