@@ -115,6 +115,7 @@ const flexTime = moment(projectedEndTime)
     .diff(startOfWorkingDay, 'minute');
 
 // Print stuff
+console.log('');
 console.log('*****************************************************');
 console.log('******************* TIME MACHINE ********************');
 console.log('*****************************************************');
