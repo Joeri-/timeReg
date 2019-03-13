@@ -52,6 +52,24 @@ if (endTime) {
     endMinutes = +endTime[1];
 }
 
+let formatError;
+
+if (endHours > 24 ||
+    endHours < 0 ||
+    startHours > 24 ||
+    startHours < 0 ||
+    endMinutes < 0 ||
+    endMinutes > 59 ||
+    startMinutes > 59 ||
+    startMinutes > 59) {
+    formatError = true;
+}
+
+if (formatError) {
+    console.error('[!]   Badly formatted input --> check the help page for instructions "node timeReg.js --help"');
+    process.exit(1);
+}
+
 // Error when no start time is given
 if (startHours > endHours || (startHours === endHours && startMinutes > endMinutes)) {
     console.error('[!]   end-time < start-time --> check the help page for instructions "node timeReg.js --help"');
