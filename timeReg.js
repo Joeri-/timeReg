@@ -68,7 +68,9 @@ if (endHours > 24 ||
     endMinutes < 0 ||
     endMinutes > 59 ||
     startMinutes > 59 ||
-    startMinutes > 59) {
+    startMinutes > 59 ||
+    LUNCH_BREAK < 0 ||
+    FLEX_TIME_CAP < 0) {
     formatError = true;
 }
 
