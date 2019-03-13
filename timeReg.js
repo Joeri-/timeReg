@@ -12,12 +12,15 @@ if (process.argv[2] === '-h' || process.argv[2] === '--help') {
     console.log('                           (default: current time)');
     console.log('   -b, --break             Length of break in minutes');
     console.log('                           (default: 45)');
+    console.log('   -m, --max-flextime      Length of the flex-time cap in minutes');
+    console.log('                           (default: 96)');
     process.exit(0);
 }
 
 // Constants
 const STANDARD_TIME = 7.4; // hours
 let LUNCH_BREAK = 45; // minutes
+let FLEX_TIME_CAP = 96; // minutes
 let startTime = ["08", "00"];
 let endTime;
 
@@ -34,6 +37,10 @@ for (let index of process.argv.keys()) {
         case '-b':
         case '--break':
             LUNCH_BREAK = process.argv[index + 1];
+            break;
+        case '-m':
+        case '--max-flextime':
+            FLEX_TIME_CAP = process.argv[index + 1];
             break;
     }
 }
@@ -106,16 +113,37 @@ const flexTime = moment(projectedEndTime)
     .diff(startOfWorkingDay, 'minute');
 
 // Print stuff
-console.log('***********************************');
-console.log('********** TIME MACHINE ***********');
-console.log('***********************************');
-console.log(`***   Full day:    ${STANDARD_TIME} hours    ***`);
-console.log(`***   Break:      ${LUNCH_BREAK} minutes    ***`);
-console.log('***********************************');
-console.log(`***   Day started     @ ${startOfWorkingDay.format('LT')}   ***`);
-console.log(`***   Half day ends   @ ${endOfHalfWorkingDay.format('LT')}   ***`);
-console.log(`***   Full day ends   @ ${endOfWorkingDay.format('LT')}   ***`);
-console.log('***********************************');
-console.log(`***        End @ ${projectedEndTime.format('LT')}          ***`);
-console.log(`***    -> Flex time == ${formatFlexTime(flexTime)}    ***`);
-console.log('***********************************');
+console.log('*****************************************************');
+console.log('******************* TIME MACHINE ********************');
+console.log('*****************************************************');
+console.log(`***            Full day:    ${STANDARD_TIME} hours             ***`);
+console.log(`***            Break:      ${LUNCH_BREAK} minutes             ***`);
+console.log('*****************************************************');
+console.log(`***            Day started         @ ${startOfWorkingDay.format('LT')}        ***`);
+console.log(`***            Half day ends       @ ${endOfHalfWorkingDay.format('LT')}        ***`);
+console.log(`***            Full day ends       @ ${endOfWorkingDay.format('LT')}        ***`);
+console.log('*****************************************************');
+console.log('*****************************************************');
+console.log(`***                 End @ ${projectedEndTime.format('LT')}                   ***`);
+console.log(`***            -> Flex time == ${formatFlexTime(flexTime)}              ***`);
+console.log('*****************************************************');
+if (flexTime > FLEX_TIME_CAP) {
+    console.log('');
+    console.log('!!!!!!!!!!!!!!!!!!!!!!!  WARNING !!!!!!!!!!!!!!!!!!!!');
+    console.log(`!!!      FlexTime addition is capped @ ${FLEX_TIME_CAP} min     !!!`);
+    console.log(`!!!           Stop working already ;)             !!!`);
+    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+}
+if (flexTime < -FLEX_TIME_CAP) {
+    console.log('');
+    console.log('!!!!!!!!!!!!!!!!!!!!!!!  WARNING !!!!!!!!!!!!!!!!!!!!');
+    console.log(`!!!    FlexTime deduction is capped @ -${FLEX_TIME_CAP} min     !!!`);
+    console.log(`!!! 1/2 day will be deducted from total Flextime  !!!`);
+    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+}
+
+console.log('');
+// console.log('***********************************');
+// console.log(`*** ! A minimum of ! ***`);
+// console.log('***********************************');
+// console.log('***********************************');
