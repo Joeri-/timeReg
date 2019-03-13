@@ -6,34 +6,38 @@ if (process.argv[2] === '-h' || process.argv[2] === '--help') {
     console.log('Usage: timeReg [OPTIONS]');
     console.log('');
     console.log('Options:');
-    console.log('   -b, --begin-time        Starting time formatted as hh:mm (ex. 08:53)');
+    console.log('   -s, --start-time        Starting time formatted as hh:mm (ex. 08:53)');
+    console.log('                           (default: 08:00)');
     console.log('   -e, --end-time          End time formatted as hh:mm (see above)');
+    console.log('                           (default: current time)');
+    console.log('   -b, --break             Length of break in minutes');
+    console.log('                           (default: 45)');
     process.exit(0);
 }
 
 // Constants
 const STANDARD_TIME = 7.4; // hours
-const LUNCH_BREAK = 45; // minutes
-let startTime, endTime;
+let LUNCH_BREAK = 45; // minutes
+let startTime = ["08", "00"];
+let endTime;
 
 for (let index of process.argv.keys()) {
     switch(process.argv[index]){
-        case '-b':
-        case '--begin-time':
+        case '-s':
+        case '--start-time':
             startTime = process.argv[index + 1].split(":");
             break;
         case '-e':
         case '--end-time':
             endTime = process.argv[index + 1].split(":");
             break;
+        case '-b':
+        case '--break':
+            LUNCH_BREAK = process.argv[index + 1];
+            break;
     }
 }
 
-// Error when no start time is given
-if (!startTime) {
-    console.error('[!]   No start time given --> see the help page "node timeReg.js --help"');
-    process.exit(1);
-}
 
 // Read the startTime
 const startHours = +startTime[0];
@@ -46,6 +50,12 @@ let endMinutes = moment().minutes();
 if (endTime) {
     endHours = +endTime[0];
     endMinutes = +endTime[1];
+}
+
+// Error when no start time is given
+if (startHours > endHours || (startHours === endHours && startMinutes > endMinutes)) {
+    console.error('[!]   end-time < start-time --> check the help page for instructions "node timeReg.js --help"');
+    process.exit(1);
 }
 
 // Helper functions
@@ -68,7 +78,7 @@ const formatFlexTime = (flexTimeInMinutes) => {
 const startOfDay = moment().startOf('day');
 const startOfWorkingDay = getTime(startOfDay, startHours, startMinutes);
 const endOfHalfWorkingDay = getTime(startOfWorkingDay, STANDARD_TIME/2, 0);
-const endOfWorkingDay = getTime(startOfWorkingDay, STANDARD_TIME, 45);
+const endOfWorkingDay = getTime(startOfWorkingDay, STANDARD_TIME, LUNCH_BREAK);
 const projectedEndTime = getTime(startOfDay, endHours, endMinutes);
 
 // Calculate flexTime
@@ -80,6 +90,9 @@ const flexTime = moment(projectedEndTime)
 // Print stuff
 console.log('***********************************');
 console.log('********** TIME MACHINE ***********');
+console.log('***********************************');
+console.log(`***   Full day:    ${STANDARD_TIME} hours    ***`);
+console.log(`***   Break:      ${LUNCH_BREAK} minutes    ***`);
 console.log('***********************************');
 console.log(`***   Day started     @ ${startOfWorkingDay.format('LT')}   ***`);
 console.log(`***   Half day ends   @ ${endOfHalfWorkingDay.format('LT')}   ***`);
