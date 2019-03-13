@@ -8,23 +8,30 @@ $ npm install
 ```
 
 ## Example use
+
+Check the `--help` pages for all the options.
+
+
 ```bash
-# Normal usage (always supply beginTime)
-$ node ./timeReg.js --begin-time 07:45
+# Normal usage 
+$ node ./timeReg.js --start-time 07:45
 # or equivalent
-$ node ./timeReg.js -b 07:45
+$ node ./timeReg.js -s 07:45
 
 # Possible to supply endTime to check flexTime balance
-$ node ./timeReg.js --begin-time 07:45 --end-time 16:30
+$ node ./timeReg.js --start-time 07:45 --end-time 16:30
 # or equivalent
-$ node ./timeReg.js -b 07:45 -e 16:30
+$ node ./timeReg.js -s 07:45 -e 16:30
 ```
 
 ## Example output
 ```bash
-$ node timeReg.js -b 07:30 -e 16:55
+$ node timeReg.js -s 07:30 -e 16:55
 ***********************************
 ********** TIME MACHINE ***********
+***********************************
+***   Full day:    7.4 hours    ***
+***   Break:      45 minutes    ***
 ***********************************
 ***   Day started     @ 07:30   ***
 ***   Half day ends   @ 11:12   ***
