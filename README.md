@@ -5,6 +5,7 @@ Just a small tool to check flexTime balance before checking out.
 ## Install
 ```bash
 $ npm install
+$ chmod +x timeReg.sh
 ```
 
 ## Example use
@@ -14,20 +15,20 @@ Check the `--help` pages for all the options.
 
 ```bash
 # Normal usage 
-$ node ./timeReg.js --start-time 07:45
+$ ./timeReg.sh --start-time 07:45
 # or equivalent
-$ node ./timeReg.js -s 07:45
+$ ./timeReg.sh -s 07:45
 
 # Possible to supply endTime to check flexTime balance
-$ node ./timeReg.js --start-time 07:45 --end-time 16:30
+$ ./timeReg.sh --start-time 07:45 --end-time 16:30
 # or equivalent
-$ node ./timeReg.js -s 07:45 -e 16:30
+$ ./timeReg.sh -s 07:45 -e 16:30
 ```
 
 ## Example output
 
 ```bash
-$ node timeReg.js -s 07:30 -e 16:55
+$ ./timeReg.sh -s 07:30 -e 16:55
 
 *****************************************************
 ******************* TIME MACHINE ********************
@@ -48,7 +49,7 @@ $ node timeReg.js -s 07:30 -e 16:55
 
 ## Example output with warning
 ```bash
-$ node ./timeReg.js -s 07:30 -e 13:55
+$ ./timeReg.sh -s 07:30 -e 13:55
 
 *****************************************************
 ******************* TIME MACHINE ********************
@@ -65,7 +66,7 @@ $ node ./timeReg.js -s 07:30 -e 13:55
 ***            -> Flex time == -01:44              ***
 *****************************************************
 
-!!!!!!!!!!!!!!!!!!!!!!!  WARNING !!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!  WARNING !!!!!!!!!!!!!!!!!!!!!!!
 !!!    FlexTime deduction is capped @ -96 min     !!!
 !!! 1/2 day will be deducted from total Flextime  !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -74,7 +75,7 @@ $ node ./timeReg.js -s 07:30 -e 13:55
 
 ## Help menu
 ```bash
-$ node ./timeReg.js --help
+$ ./timeReg.sh --help
 Usage: timeReg [OPTIONS]
 
 Options:
