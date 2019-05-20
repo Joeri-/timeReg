@@ -10,6 +10,6 @@
   "author": "joeri.jackers@gmail.com",
   "license": "ISC",
   "dependencies": {
-    "moment": "2.24.0"
+    "moment": "^2.24.0"
   }
 }
