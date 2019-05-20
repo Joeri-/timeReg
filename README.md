@@ -3,9 +3,10 @@
 Just a small tool to check flexTime balance before checking out.
 
 ## Install
+
 ```bash
 $ npm install
-$ chmod +x timeReg.sh
+$ npm start
 ```
 
 ## Example use
@@ -15,20 +16,20 @@ Check the `--help` pages for all the options.
 
 ```bash
 # Normal usage 
-$ ./timeReg.sh --start-time 07:45
+$ npm start --start-time 07:45
 # or equivalent
-$ ./timeReg.sh -s 07:45
+$ npm start -s 07:45
 
 # Possible to supply endTime to check flexTime balance
-$ ./timeReg.sh --start-time 07:45 --end-time 16:30
+$ npm start --start-time 07:45 --end-time 16:30
 # or equivalent
-$ ./timeReg.sh -s 07:45 -e 16:30
+$ npm start -s 07:45 -e 16:30
 ```
 
 ## Example output
 
 ```bash
-$ ./timeReg.sh -s 07:30 -e 16:55
+$ npm start -s 07:30 -e 16:55
 
 *****************************************************
 ******************* TIME MACHINE ********************
@@ -49,7 +50,7 @@ $ ./timeReg.sh -s 07:30 -e 16:55
 
 ## Example output with warning
 ```bash
-$ ./timeReg.sh -s 07:30 -e 13:55
+$ npm start -s 07:30 -e 13:55
 
 *****************************************************
 ******************* TIME MACHINE ********************
@@ -75,7 +76,7 @@ $ ./timeReg.sh -s 07:30 -e 13:55
 
 ## Help menu
 ```bash
-$ ./timeReg.sh --help
+$ npm start --help
 Usage: timeReg [OPTIONS]
 
 Options:
