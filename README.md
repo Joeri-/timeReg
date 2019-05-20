@@ -6,8 +6,10 @@ Just a small tool to check flexTime balance before checking out.
 
 ```bash
 $ npm install
-$ npm start
+$ ./timeReg.js or node timeReg.js
 ```
+
+You could even use npm start, but that way it's not very convenient to pass commandline parameters.
 
 ## Example use
 
