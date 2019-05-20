@@ -1,63 +1,56 @@
+#!/usr/bin/env node
+'use strict';
+
 const moment = require('moment');
 moment.locale('nl-be');
 
-// Help page
-if (process.argv[2] === '-h' || process.argv[2] === '--help') {
-    console.log('Usage: timeReg [OPTIONS]');
-    console.log('');
-    console.log('Options:');
-    console.log('   -s, --start-time        Starting time formatted as hh:mm (ex. 08:53)');
-    console.log('                           (default: 08:00)');
-    console.log('   -e, --end-time          End time formatted as hh:mm (see above)');
-    console.log('                           (default: current time)');
-    console.log('   -b, --break             Length of break in minutes');
-    console.log('                           (default: 45)');
-    console.log('   -m, --max-flextime      Length of the flex-time cap in minutes');
-    console.log('                           (default: 96)');
-    process.exit(0);
-}
+const yargs = require('yargs');
 
+const argv = yargs
+    .usage('timeReg [--start-time 09:00] [--end-time 17:00] [--break 45] [--max-flextime 96]')
+
+    // option: directory
+    .string('start-time')
+    .alias('s', 'start-time')
+    .describe('start-time', 'Starting time formatted as hh:mm (ex. 08:53). Default is 08:00')
+
+    // option: files
+    .string('end-time')
+    .alias('f', 'end-time')
+    .describe('end-time', 'End time formatted as hh:mm (see above). Default is the current time')
+
+    // option: overrides
+    .number('break')
+    .alias('b', 'break')
+    .describe('break', 'Length of lunch break in minutes. Default is 45')
+
+    // option: json
+    .number('max-flextime')
+    .alias('m', 'max-flextime')
+    .describe('max-flextime', 'Length of the flex-time cap in minutes. Default is 96')
+
+    // flag: help
+    .help('h')
+
+    // flag: version
+    .version()
+
+    .argv;
+    
 // Constants
 const STANDARD_TIME = 7.4; // hours
-let LUNCH_BREAK = 45; // minutes
-let FLEX_TIME_CAP = 96; // minutes
-let startTime = ["08", "00"];
-let endTime;
+const LUNCH_BREAK = argv.b || 45; // minutes
+const FLEX_TIME_CAP = argv.m || 96; // minutes
+const startTime = argv.s ? argv.s.split(":") : ["08", "00"];
+const endTime = argv.e ? argv.e.split(":") : [moment().hours(), moment().minutes()];
 
-for (let index of process.argv.keys()) {
-    switch(process.argv[index]){
-        case '-s':
-        case '--start-time':
-            startTime = process.argv[index + 1].split(":");
-            break;
-        case '-e':
-        case '--end-time':
-            endTime = process.argv[index + 1].split(":");
-            break;
-        case '-b':
-        case '--break':
-            LUNCH_BREAK = process.argv[index + 1];
-            break;
-        case '-m':
-        case '--max-flextime':
-            FLEX_TIME_CAP = process.argv[index + 1];
-            break;
-    }
-}
-
-
-// Read the startTime
+// Split the startTime
 const startHours = +startTime[0];
 const startMinutes = +startTime[1];
 
-// Read the endTime or use the current time if no endTime is passed
-let endHours = moment().hours();
-let endMinutes = moment().minutes();
-
-if (endTime) {
-    endHours = +endTime[0];
-    endMinutes = +endTime[1];
-}
+// Split the endTime
+const endHours = +endTime[0];
+const endMinutes = +endTime[1];
 
 let formatError;
 
