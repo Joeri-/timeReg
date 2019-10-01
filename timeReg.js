@@ -7,38 +7,47 @@ moment.locale('nl-be');
 const yargs = require('yargs');
 
 const argv = yargs
-    .usage('timeReg [--start-time 09:00] [--end-time 17:00] [--break 45] [--max-flextime 96]')
+    .usage('timeReg [--start-time 09:00] [--end-time 17:00] [--full-day 444] [--break 45] [--max-flextime 96]')
 
-    // option: directory
+    // option: start-time
     .string('start-time')
     .alias('s', 'start-time')
-    .describe('start-time', 'Starting time formatted as hh:mm (ex. 08:53). Default is 08:00')
+    .describe('start-time', 'Starting time formatted as hh:mm (ex. 08:53). \n Default is 08:00')
 
-    // option: files
+    // option: end-time
     .string('end-time')
     .alias('f', 'end-time')
-    .describe('end-time', 'End time formatted as hh:mm (see above). Default is the current time')
+    .describe('end-time', 'End time formatted as hh:mm (see above). \n Default is the current time.')
 
-    // option: overrides
+    // option: full-day
+    .number('full-day')
+    .alias('f', 'full-day')
+    .describe('break', 'Length of full day in minutes. \n Default is 444 minutes (= 7.4 hours).')
+
+    // option: break
     .number('break')
     .alias('b', 'break')
-    .describe('break', 'Length of lunch break in minutes. Default is 45')
+    .describe('break', 'Length of lunch break in minutes. \n Default is 45 minutes.')
 
-    // option: json
+    // option: max-flextime
     .number('max-flextime')
     .alias('m', 'max-flextime')
-    .describe('max-flextime', 'Length of the flex-time cap in minutes. Default is 96')
+    .describe('max-flextime', 'Length of the flex-time cap in minutes. \n Default is 96 minutes.')
 
     // flag: help
     .help('h')
+	.alias('h','help')
 
     // flag: version
     .version()
+	.alias('v', 'version')
 
     .argv;
     
 // Constants
-const STANDARD_TIME = 7.4; // hours
+const STANDARD_TIME_IN_HOURS = (new Date(argv.f*60*1000)).getHours() - 1;
+const STANDARD_TIME_IN_DECIMAL_HOURS = Math.round((new Date(argv.f*60*1000)).getMinutes() / 60*100) / 100;
+const STANDARD_TIME = STANDARD_TIME_IN_HOURS + STANDARD_TIME_IN_DECIMAL_HOURS || 7.4;
 const LUNCH_BREAK = argv.b || 45; // minutes
 const FLEX_TIME_CAP = argv.m || 96; // minutes
 const startTime = argv.s ? argv.s.split(":") : ["08", "00"];
@@ -93,6 +102,7 @@ const formatFlexTime = (flexTimeInMinutes) => {
     const time = `${hours}:${minutes}`;
     return sign < 0 ? `-${time}` : time;
 };
+
 
 // All the different moments we need
 const startOfDay = moment().startOf('day');
