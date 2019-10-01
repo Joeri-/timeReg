@@ -80,13 +80,17 @@ $ ./timeReg.js --help
 Usage: timeReg [OPTIONS]
 
 Options:
-   -s, --start-time        Starting time formatted as hh:mm (ex. 08:53)
-                           (default: 08:00)
-   -e, --end-time          End time formatted as hh:mm (see above)
-                           (default: current time)
-   -b, --break             Length of break in minutes
-                           (default: 45)
-   -m, --max-flextime      Length of the flex-time cap in minutes
-                           (default: 96)
+  -h, --help          Show help                                        [boolean]
+  -s, --start-time    Starting time formatted as hh:mm (ex. 08:53).
+                      Default is 08:00                                  [string]
+  -e, --end-time      End time formatted as hh:mm (see above).
+                      Default is the current time.                      [string]
+  -f, --full-day      Length of full day in minutes.
+                      Default is 444 minutes (= 7.4 hours).             [number]
+  -b, --break         Length of lunch break in minutes.
+                      Default is 45 minutes.                            [number]
+  -m, --max-flextime  Length of the flex-time cap in minutes.
+                      Default is 96 minutes.                            [number]
+  -v, --version       Show version number                              [boolean]
 ```
 

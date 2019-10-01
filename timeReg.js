@@ -16,13 +16,13 @@ const argv = yargs
 
     // option: end-time
     .string('end-time')
-    .alias('f', 'end-time')
+    .alias('e', 'end-time')
     .describe('end-time', 'End time formatted as hh:mm (see above). \n Default is the current time.')
 
     // option: full-day
     .number('full-day')
     .alias('f', 'full-day')
-    .describe('break', 'Length of full day in minutes. \n Default is 444 minutes (= 7.4 hours).')
+    .describe('full-day', 'Length of full day in minutes. \n Default is 444 minutes (= 7.4 hours).')
 
     // option: break
     .number('break')
