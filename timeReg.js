@@ -43,15 +43,29 @@ const argv = yargs
 	.alias('v', 'version')
 
     .argv;
-    
+
 // Constants
-const STANDARD_TIME_IN_HOURS = (new Date(argv.f*60*1000)).getHours() - 1;
-const STANDARD_TIME_IN_DECIMAL_HOURS = Math.round((new Date(argv.f*60*1000)).getMinutes() / 60*100) / 100;
+const STANDARD_TIME_IN_HOURS = (new Date(argv.f*60*1000)).getHours() - 1 || 7;
+const STANDARD_TIME_IN_DECIMAL_HOURS = Math.round((new Date(argv.f*60*1000)).getMinutes() / 60*100) / 100 || 0.4;
 const STANDARD_TIME = STANDARD_TIME_IN_HOURS + STANDARD_TIME_IN_DECIMAL_HOURS || 7.4;
-const LUNCH_BREAK = argv.b || 45; // minutes
-const FLEX_TIME_CAP = argv.m || 96; // minutes
+const LUNCH_BREAK = +argv.b || 45; // minutes
+const FLEX_TIME_CAP = +argv.m || 96; // minutes
+
+const FLEX_TIME_HOURS = Math.floor(FLEX_TIME_CAP / 60);
+const FLEX_TIME_DECIMAL_HOURS = FLEX_TIME_HOURS + (FLEX_TIME_CAP - FLEX_TIME_HOURS * 60)/60 || 1.6;
+
+// MINIMAL_TIME = STANDARD_TIME - FLEX_TIME_CAP
+// const MINIMAL_TIME = STANDARD_TIME_IN_HOURS + STANDARD_TIME_IN_DECIMAL_HOURS - FLEX_TIME_DECIMAL_HOURS || 7.4 - FLEX_TIME_DECIMAL_HOURS;
+const MINIMAL_TIME = STANDARD_TIME_IN_HOURS + STANDARD_TIME_IN_DECIMAL_HOURS - FLEX_TIME_DECIMAL_HOURS;
+const MAXIMAL_TIME = STANDARD_TIME_IN_HOURS + STANDARD_TIME_IN_DECIMAL_HOURS + FLEX_TIME_DECIMAL_HOURS;
+
 const startTime = argv.s ? argv.s.split(":") : ["08", "00"];
 const endTime = argv.e ? argv.e.split(":") : [moment().hours(), moment().minutes()];
+
+let endTimeIsNow = false;
+if (!argv.e) {
+    endTimeIsNow = true;
+}
 
 // Split the startTime
 const startHours = +startTime[0];
@@ -100,7 +114,7 @@ const formatFlexTime = (flexTimeInMinutes) => {
     hours = hours < 10 ? `0${hours}` : `${hours}`;
 
     const time = `${hours}:${minutes}`;
-    return sign < 0 ? `-${time}` : time;
+    return sign < 0 ? `-${time}` : ` ${time}`;
 };
 
 
@@ -108,6 +122,8 @@ const formatFlexTime = (flexTimeInMinutes) => {
 const startOfDay = moment().startOf('day');
 const startOfWorkingDay = getTime(startOfDay, startHours, startMinutes);
 const endOfHalfWorkingDay = getTime(startOfWorkingDay, STANDARD_TIME/2, 0);
+const endOfMinimalWorkingDay = getTime(startOfWorkingDay, MINIMAL_TIME, LUNCH_BREAK);
+const endOfMaximalWorkingDay = getTime(startOfWorkingDay, MAXIMAL_TIME, LUNCH_BREAK);
 const endOfWorkingDay = getTime(startOfWorkingDay, STANDARD_TIME, LUNCH_BREAK);
 const projectedEndTime = getTime(startOfDay, endHours, endMinutes);
 
@@ -119,33 +135,40 @@ const flexTime = moment(projectedEndTime)
 
 // Print stuff
 console.log('');
-console.log('*****************************************************');
-console.log('******************* TIME MACHINE ********************');
-console.log('*****************************************************');
-console.log(`***            Full day:    ${STANDARD_TIME} hours             ***`);
-console.log(`***            Break:      ${LUNCH_BREAK} minutes             ***`);
-console.log('*****************************************************');
-console.log(`***            Day started         @ ${startOfWorkingDay.format('LT')}        ***`);
-console.log(`***            Half day ends       @ ${endOfHalfWorkingDay.format('LT')}        ***`);
-console.log(`***            Full day ends       @ ${endOfWorkingDay.format('LT')}        ***`);
-console.log('*****************************************************');
-console.log('*****************************************************');
-console.log(`***                 End @ ${projectedEndTime.format('LT')}                   ***`);
-console.log(`***            -> Flex time == ${formatFlexTime(flexTime)}              ***`);
-console.log('*****************************************************');
+console.log('*************************************************');
+console.log('**************** TIME MACHINE *******************');
+console.log('*************************************************');
+console.log(`***        Full day:        ${STANDARD_TIME} hours         ***`);
+console.log(`***        Break:           ${LUNCH_BREAK} minutes        ***`);
+console.log(`***        Flex time cap:   ${FLEX_TIME_CAP} minutes        ***`);
+console.log('*************************************************');
+console.log(`***        Day started         @ ${startOfWorkingDay.format('LT')}        ***`);
+console.log(`***        Day ended ${endTimeIsNow ? '(now)' : '     '}     @ ${projectedEndTime.format('LT')}        ***`);
+console.log(`***       -----------------------------       ***`);
+console.log(`***        Half day ends       @ ${endOfHalfWorkingDay.format('LT')}        ***`);
+console.log(`***        MIN  day ends       @ ${endOfMinimalWorkingDay.format('LT')}        ***`);
+console.log(`***        Neutral day ends    @ ${endOfWorkingDay.format('LT')}        ***`);
+console.log(`***        MAX  day ends       @ ${endOfMaximalWorkingDay.format('LT')}        ***`);
+console.log('*************************************************');
+console.log(`***         -> Flex time == ${formatFlexTime(flexTime)}            ***`);
+console.log('*************************************************');
 if (flexTime > FLEX_TIME_CAP) {
     console.log('');
-    console.log('!!!!!!!!!!!!!!!!!!!!!!!  WARNING !!!!!!!!!!!!!!!!!!!!');
+    console.log('!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!');
     console.log(`!!!      FlexTime addition is capped @ ${FLEX_TIME_CAP} min     !!!`);
+    console.log(`!!!    ---------------------------------------    !!!`);
     console.log(`!!!           Stop working already ;)             !!!`);
     console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 }
 if (flexTime < -FLEX_TIME_CAP) {
     console.log('');
-    console.log('!!!!!!!!!!!!!!!!!!!!!!!  WARNING !!!!!!!!!!!!!!!!!!!!');
-    console.log(`!!!    FlexTime deduction is capped @ -${FLEX_TIME_CAP} min     !!!`);
-    console.log(`!!! 1/2 day will be deducted from total Flextime  !!!`);
-    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    console.log('!!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!!!!');
+    console.log(`!!!      FlexTime deduction is capped @ -${FLEX_TIME_CAP} min       !!!`);
+    console.log(`!!!     -----------------------------------------     !!!`);
+    console.log(`!!!                                                   !!!`);
+    console.log(`!!!  If you do decide to sign out now, 1/2 day will   !!!`);
+    console.log(`!!! be deducted from your flextime compensation days  !!!`);
+    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 }
 
 console.log('');
