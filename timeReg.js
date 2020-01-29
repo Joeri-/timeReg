@@ -154,7 +154,7 @@ console.log(`     ***        MAX  day ends       @ ${endOfMaximalWorkingDay.form
 console.log('     *************************************************');
 console.log('');
 console.log('     *************************************************');
-console.log(`     ***  Resulting Flex time == ${formatFlexTime(flexTime)} (${flexTime}min)  ***`);
+console.log(`     ***  Resulting Flex time == ${formatFlexTime(flexTime)} (${flexTime} min) ***`);
 console.log('     *************************************************');
 if (flexTime > FLEX_TIME_CAP) {
     console.log('');
